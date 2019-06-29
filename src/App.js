@@ -55,13 +55,14 @@ handleClick = (e) => {
     e.preventDefault();
     const itemsRef = firebase.database().ref('items');
     const item = {
-      title1: this.state.from,
-      title2: this.state.via,       
-      title3: this.state.to,
-      title4: this.state.time,
-      title5: this.state.vacantSeats,
-      title6: this.state.vehType,
-      user: this.state.user.displayName || this.state.user.email
+      from: this.state.from,
+      via: this.state.via,       
+      to: this.state.to,
+      time: this.state.time,
+      seats: this.state.vacantSeats,
+      vehtype: this.state.vehType,
+      user:  this.state.user.email,
+      username : this.state.user.displayName 
     }
 
     itemsRef.push(item);
@@ -72,7 +73,8 @@ handleClick = (e) => {
       time:'',
       vacantSeats:'',
       vehType:'',
-      username: ''
+      username: '',
+      user:''
     });
   }
   componentDidMount() {
@@ -88,13 +90,14 @@ handleClick = (e) => {
       for (let item in items) {
         newState.push({
           id: item,
-          title1: items[item].title1,
-	  title2: items[item].title2,
-	  title3: items[item].title3,
-	  title4: items[item].title4,
-	  title5: items[item].title5,
-	  title6: items[item].title6,
-          user: items[item].user
+          from: items[item].from,
+	  via: items[item].via,
+	  to: items[item].to,
+	  time: items[item].time,
+	  seats: items[item].seats,
+	  vehtype: items[item].vehtype,
+          user: items[item].user,
+	  username: items[item].username
         });
       }
       this.setState({
@@ -116,8 +119,8 @@ var emailjs = require('emailjs-com');
     var user_id = 'user_MEzIxr0foZZ9KQz8G9WkQ';
     var template_params = {
         "to":itemId,
-        "subject": "subject_value",
-        "content": "content_value"
+        "subject": "Request for Pooling",
+        "content": "If seats are available will you please confirm my pooling request"
      }
     emailjs.send(service_id,template_id,template_params, user_id)
     .then(function(){ 
@@ -149,7 +152,7 @@ var emailjs = require('emailjs-com');
             <div className='container'>
               <section className='add-item'>
                     <form onSubmit={this.handleSubmit}>
-                      <input type="text" name="username" placeholder="What's your name?" onChange={this.handleChange} value={this.state.user.displayName || this.state.user.email} />
+                      <input type="text" name="username" placeholder="What's your name?" onChange={this.handleChange} value={ this.state.user.displayName} />
                      <input type="text" name="from" placeholder="Pooling From?" onChange={this.handleChange} value={this.state.from} />	
  		     <input type="text" name="via" placeholder="Pooling Via?" onChange={this.handleChange} value={this.state.via} />	
 		     <input type="text" name="to" placeholder="Pooling To?" onChange={this.handleChange} value={this.state.to} />
@@ -167,19 +170,19 @@ var emailjs = require('emailjs-com');
                       {this.state.items.map((item) => {
                         return (
                           <li key={item.id}>
-                            <h3>Pooling By: {item.user} </h3>
-                            <p>	<b>From : </b> {item.title1}<br/><br/>
-				<b>Via : </b>{item.title2}<br/><br/>
-				<b>To : </b>{item.title3}<br/><br/>
-				<b>Time : </b>{item.title4}<br/><br/>
-				<b>Vacant Seats : </b>{item.title5}<br/><br/>
-				<b>Vehical Type : </b>{item.title6}
-                              	{item.user === this.state.user.displayName || item.user === this.state.user.email ?
+                            <h3>Pooling By: {item.username} </h3>
+                            <p>	<b>From : </b> {item.from}<br/><br/>
+				<b>Via : </b>{item.via}<br/><br/>
+				<b>To : </b>{item.to}<br/><br/>
+				<b>Time : </b>{item.time}<br/><br/>
+				<b>Vacant Seats : </b>{item.seats}<br/><br/>
+				<b>Vehical Type : </b>{item.vehtype}
+                              	{item.username === this.state.user.displayName || item.user === this.state.user.email ?
                                 <button onClick={() => this.removeItem(item.id)}>Remove</button>
                               	: null}
                                 
-				{item.user !== this.state.user.displayName ?
-                                <button onClick={() => this.RequestItem(this.state.user.email)}>Request</button>
+				{ item.user !== this.state.user.email ?
+                                <button onClick={() => this.RequestItem(item.user)}>Request</button>
                              	: null}                            
                             </p>
                           </li>
